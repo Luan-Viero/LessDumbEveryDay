@@ -137,7 +137,8 @@ def get_wikipedia() -> Dict[str, str]:
 
         title = random.choice(pages)["title"]
         article_response = requests.get(
-            f"https://pt.wikipedia.org/api/rest_v1/page/summary/{quote(title)}",
+            f"https://pt.wikipedia.org/api/rest_v1/page/summary/"
+            f"{quote(title)}",
             params={"redirect": "true"},
             timeout=10,
         )

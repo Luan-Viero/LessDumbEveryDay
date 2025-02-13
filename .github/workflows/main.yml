@@ -27,4 +27,4 @@ jobs:
         env:
           VAULT_PATH: ${{ secrets.VAULT_PATH }}  # Caminho relativo ao vault no repositório
           OBSIDIAN_VAULT_NAME: ${{ secrets.OBSIDIAN_VAULT_NAME }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  # Se usado
+          API_KEY: ${{ secrets.API_KEY }}  # Se usado
