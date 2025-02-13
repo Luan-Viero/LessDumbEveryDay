@@ -14,6 +14,9 @@ load_dotenv()
 obsidian_vault_name = os.getenv("OBSIDIAN_VAULT_NAME")
 vault_path = Path(os.getenv("VAULT_PATH", "./vault"))
 
+# Cria o diretório se não existir
+vault_path.mkdir(parents=True, exist_ok=True)
+
 # Configurar logging
 logging.basicConfig(
     filename=vault_path / "knowledge_drop_errors.log",
