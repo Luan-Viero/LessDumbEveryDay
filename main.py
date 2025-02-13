@@ -169,8 +169,10 @@ if __name__ == "__main__":
 
         # Após salvar o arquivo:
         if file_path.exists():
-            obsidian_url = f"obsidian://open?vault={
-                quote(obsidian_vault_name)}&file=Inbox/{quote(file_path.name)}"
+            obsidian_url = (
+                f"obsidian://open?vault={quote(obsidian_vault_name)}"
+                f"&file=Inbox/{quote(file_path.name)}"
+            )
             webbrowser.open(obsidian_url)
         else:
             logging.error("Falha ao criar arquivo")
@@ -181,7 +183,6 @@ if __name__ == "__main__":
     except Exception as e:
         logging.error(f"Erro fatal: {str(e)}")
         webbrowser.open(
-            f"obsidian://new?vault={obsidian_vault_name}&name=ERRO-{
-                datetime.now().strftime('%Y-%m-%d')
-                }"
+            f"obsidian://new?vault={obsidian_vault_name}"
+            f"&name=ERRO-{datetime.now().strftime('%Y-%m-%d')}"
         )

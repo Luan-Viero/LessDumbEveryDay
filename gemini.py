@@ -21,10 +21,13 @@ def generate_summary(
 # ANÁLISE SEPARADA DE FONTES - FORMATAÇÃO RIGOROSA
 
 ## INSTRUÇÕES GERAIS:
-- **Siga estritamente o formato exigido** abaixo, sem adicionar ou remover elementos estruturais.
+- **Siga estritamente o formato exigido** abaixo, sem adicionar ou remover \
+    elementos estruturais.
 - **Não misture informações** de `{main_link}` com `{daily_stoic_link}`.
-- **A resposta deve ser sempre em português**, independentemente do idioma original das fontes.
-- **Mantenha o padrão visual exato**: títulos, bullets e separações devem ser respeitados.
+- **A resposta deve ser sempre em português**, independentemente do idioma \
+    original das fontes.
+- **Mantenha o padrão visual exato**: títulos, bullets e separações devem ser \
+    respeitados.
 - **Não interprete ou reformule informações**, apenas extraia e formate.
 
 ---
@@ -37,7 +40,8 @@ def generate_summary(
 
 ## Resumo:
 
-<!-- Aplicar princípio 80/20: 1 parágrafo denso com os 20% de conceitos que entregam 80% do valor -->
+<!-- Aplicar princípio 80/20: 1 parágrafo denso com os 20% de conceitos que \
+    entregam 80% do valor -->
 
 ## Pontos-chave:
 
@@ -94,7 +98,8 @@ Resumo do link principal.
 ```
 
 **IMPORTANTE:**
-A saída **deve ser exatamente** como o exemplo acima. O modelo **NÃO deve alterar a estrutura ou formato**.  
+A saída **deve ser exatamente** como o exemplo acima. O modelo **NÃO deve \
+    alterar a estrutura ou formato**.
 """
 
         response = model.generate_content(prompt)
