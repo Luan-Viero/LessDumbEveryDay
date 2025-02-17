@@ -91,26 +91,24 @@ def create_daily_note(
 
         # Criar template
         return f"""---
+id: {note_id.toString()}
 tags: [{category}]
-date: {datetime.now().strftime('%Y-%m-%d')}
-source: "{category}"
+tema:
+
 ---
 
 # {title}
 
-## Metadata
-- **Id:** {note_id}
-
-## Referência
+## Referência:
 - Fonte: [{category.capitalize()}]({link})
 
-## Resumo
+## Resumo:
 {sections['resumo']}
 
-## Pontos-chave
+## Pontos-chave:
 {sections['pontos_chave']}
 
-## Citação do dia
+## Citação do dia:
 {sections['citacao']}
 """
 
@@ -158,7 +156,7 @@ if __name__ == "__main__":
         ]  # Remove caracteres inválidos
         file_path = (
             vault_path
-            / f"{safe_title} - {datetime.now().strftime('%Y%m%d')}.md"
+            / f"{datetime.now().strftime('%Y%m%d%H%M')} - {safe_title}.md"
         )
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(

@@ -187,3 +187,5 @@ pip-selfcheck.json
 *.bat
 *.cmd
 *.btm
+*.ps1
+
