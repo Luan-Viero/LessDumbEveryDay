@@ -22,6 +22,7 @@ TARGET_CATEGORIES = [
     "Ciências naturais",
     "Cosmologia",
     "Cristianismo",
+    "Filosofia"
     "Física",
     "História antiga",
     "História da ciência",
