@@ -91,7 +91,7 @@ def create_daily_note(
 
         # Criar template
         return f"""---
-id: {note_id.toString()}
+id: "{note_id}"
 tags: [{category}]
 tema:
 

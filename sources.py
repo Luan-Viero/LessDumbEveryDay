@@ -87,7 +87,7 @@ def generate_fallback_note(failed_sources: list) -> Dict[str, str]:
         "link": "",
         "content": f"""
         **Fontes tentadas:** {", ".join(failed_sources)}
-        
+
         ## Instruções:
         1. Acesse manualmente: [Wikipedia](https://wikipedia.org)
         2. Escolha um conceito relevante
