@@ -14,8 +14,8 @@ def generate_summary(
     Gera resumo, pontos-chave e citação para a nota no formato especificado
     """
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-pro")
+        genai.configure(api_key=api_key, transport="rest")
+        model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
         prompt = f"""\
 # ANÁLISE SEPARADA DE FONTES - FORMATAÇÃO RIGOROSA
@@ -28,7 +28,7 @@ def generate_summary(
 - **Acesse o link {daily_stoic_link} e EXAMINE o conteúdo, identificando a citação mais relevante do dia.**
 - **A saída deve ser EXATAMENTE como o exemplo fornecido, sem qualquer alteração na estrutura ou formato.**
 - **NÃO adicione informações extras ou faça suposições. Extraia APENAS o que é solicitado.**
-- **A resposta deve ser sempre em português**, independentemente do idioma original das fontes.
+- **A resposta deve ser SEMPRE em português**, independentemente do idioma original das fontes.
 - **Mantenha o padrão visual exato**: títulos, bullets e separações devem ser respeitados.
 - **Não interprete ou reformule informações**, apenas extraia das fontes fornecidas e formate.
 
@@ -44,9 +44,11 @@ def generate_summary(
 ## Resumo:
 
 <!-- Leia atentamente o conteúdo do link fornecido e:
-- Explique o conceito central de forma clara e estruturada, destacando as ideias principais.
-- Use frases curtas e diretas para facilitar a assimilação, sem excesso de condensação.
-- O resumo deve ser informativo e conciso, mas sem sacrificar a clareza. -->
+- Explique o conceito do conteúdo de forma clara, precisa e fundamentada, sem inventar informações.
+- Use definições bem estabelecidas e, se necessário, inclua exemplos concretos ou analogias para facilitar o entendimento.
+- O nível de detalhamento deve ser adequado para alguém com conhecimento intermediário no assunto, garantindo profundidade sem ser excessivamente técnico.
+- Caso existam diferentes abordagens ou interpretações, apresente-as de forma equilibrada, destacando os principais pontos de consenso e divergência.
+- Evite simplificações excessivas e especulações. -->
 
 ## Pontos-chave:
 
