@@ -26,7 +26,6 @@ def generate_summary(
 - **EXTRAIA as informações EXATAS do link, SEM INTERPRETAR, RESUMIR ou PARAFRASEAR.**
 - **MANTENHA o formato de saída EXATAMENTE como no exemplo fornecido, sem adicionar ou remover elementos.**
 - **Acesse o link {daily_stoic_link} e EXAMINE o conteúdo, identificando a citação mais relevante do dia.**
-- **A saída deve ser EXATAMENTE como o exemplo fornecido, sem qualquer alteração na estrutura ou formato.**
 - **NÃO adicione informações extras ou faça suposições. Extraia APENAS o que é solicitado.**
 - **A resposta deve ser SEMPRE em português**, independentemente do idioma original das fontes.
 - **Mantenha o padrão visual exato**: títulos, bullets e separações devem ser respeitados.
@@ -71,7 +70,7 @@ def generate_summary(
 
 ## Citação do dia:
 
-> "[Texto EXATO da citação mais relevante do Daily Stoic]"
+> "[Texto EXATO da citação mais relevante do Daily Stoic]" (Traduzir da forma mais literal possível para o Português)
 - [Autor da citação] (se identificado)
 
 ---
