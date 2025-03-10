@@ -125,13 +125,7 @@ if __name__ == "__main__":
 
         # Determinar fonte do dia
         day = datetime.today().weekday()
-        fonts = [
-            "wikipedia",
-            "science",
-            "jstor",
-            "nautilus",
-            "pesquisa_fapesp",
-        ]
+        fonts = ["wikipedia", "jstor", "plato", "arxiv", "daily_stoic"]
         daily_font = fonts[day] if day < 5 else "wikipedia"  # Seg-Sex
 
         # Obter conteúdo estruturado

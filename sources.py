@@ -6,29 +6,25 @@ import logging
 import random
 import requests
 
-# Mapeamento de fallback para fontes
-FALLBACK_MAP = {
-    "wikipedia": ["pesquisa_fapesp", "jstor"],
-    "science": ["wikipedia", "nautilus"],
-    "jstor": ["science", "wikipedia"],
-    "pesquisa_fapesp": ["science", "jstor"],
-    "nautilus": ["pesquisa_fapesp", "wikipedia"],
-}
-
 TARGET_CATEGORIES = [
     "Aracnologia",
+    "Arqueologia",
     "Astronomia",
     "Biologia",
     "Ciências naturais",
     "Cosmologia",
     "Cristianismo",
-    "Filosofia"
+    "Ética",
+    "Evolução",
+    "Filosofia medieval",
+    "Filosofia",
     "Física",
-    "História antiga",
+    "História Antiga",
     "História da ciência",
     "História da Igreja",
     "História da religião",
     "Mitologia",
+    "Neurociência",
     "Paleontologia",
     "Reforma Protestante",
     "Sobrevivência",
@@ -37,47 +33,51 @@ TARGET_CATEGORIES = [
 ]
 
 
-def get_with_fallback(source: str, max_fallbacks: int = 2) -> Dict[str, str]:
-    """Tenta a fonte principal e fallbacks em caso de erro."""
-    sources = [source] + FALLBACK_MAP.get(source, [])
+def get_content(source: str) -> Dict[str, str]:
+    """
+    Obtém o conteúdo de uma fonte específica e o formata em um dicionário.
 
-    for attempt, current_source in enumerate(sources):
-        try:
-            content = globals()[f"get_{current_source}"]()
-            if content:
-                content = content
-                break
+    Esta função tenta obter conteúdo de uma fonte especificada, realiza
+    validações e retorna um dicionário formatado com o conteúdo principal e um
+    conteúdo adicional do Daily Stoic.
 
-            logging.warning(
-                f"Conteúdo inválido de {current_source}. Tentando fallback..."
-            )
+    Args:
+        source (str): O nome da fonte de conteúdo a ser consultada.
 
-        except Exception:
-            logging.error(f"Falha em {current_source}", exc_info=True)
-            if attempt >= max_fallbacks:
-                break
-    # Se não conseguir obter o conteúdo da fonte principal, usa fallback
-    if not content:
-        content = generate_fallback_note(sources)
+    Returns:
+        Dict[str, str]: Um dicionário contendo:
+            - 'main': Um dicionário com 'title' e 'link' do conteúdo principal.
+            - 'daily_stoic': O conteúdo obtido do Daily Stoic.
 
-    # Obtém o conteúdo do Daily Stoic
-    daily_stoic_content = get_daily_stoic()
+    Raises:
+        ValueError: Se o conteúdo obtido estiver incompleto.
+        Exception: Para qualquer outro erro durante a obtenção ou processamento
+            do conteúdo.
 
-    # Retorna um dicionário com ambos os conteúdos
-    return {
-        "main": {
-            "title": content.get("title", "Título não disponível"),
-            "link": content.get("link", ""),
-            "content": content.get("content", "Conteúdo não disponível"),
-        },
-        "daily_stoic": {
-            "title": daily_stoic_content.get("title", "Daily Stoic"),
-            "link": daily_stoic_content.get("link", ""),
-            "content": daily_stoic_content.get(
-                "content", "Conteúdo não disponível"
-            ),
-        },
-    }
+    Note:
+        - A função usa `globals()` para chamar dinamicamente a função de
+            obtenção específica para a fonte fornecida.
+        - Erros são registrados usando o módulo `logging`.
+    """
+
+    try:
+        content = globals()[f"get_{source}"]()
+
+        # Validação rigorosa
+        if not content.get("link") or not content.get("title"):
+            raise ValueError(f"Conteúdo incompleto de {source}")
+
+        # return content
+        return {
+            "main": {
+                "title": content.get("title", "Título não disponível"),
+                "link": content.get("link", ""),
+            },
+            "daily_stoic": get_daily_stoic(),
+        }
+
+    except Exception as e:
+        logging.error(f"Falha em '{source}': {str(e)}", exc_info=True)
 
 
 def generate_fallback_note(failed_sources: list) -> Dict[str, str]:
@@ -97,7 +97,27 @@ def generate_fallback_note(failed_sources: list) -> Dict[str, str]:
 
 
 def fetch_feed(url: str, timeout: int = 10) -> Optional[dict]:
-    """Obtém e valida feeds RSS/Atom."""
+    """Obtém e valida feeds RSS/Atom a partir de uma URL.
+
+    Esta função faz uma requisição HTTP para a URL fornecida, tenta obter o
+    conteúdo do feed e analisá-lo usando a biblioteca `feedparser`. Se o feed
+    for válido e contiver entradas, ele é retornado como um dicionário.
+    Caso contrário, retorna `None`.
+
+    Args:
+        url (str): A URL do feed RSS/Atom a ser buscado.
+        timeout (int, opcional): Tempo limite da requisição em segundos.
+            Padrão é 10 segundos.
+
+    Returns:
+        Optional[dict]: Um dicionário contendo o feed analisado se houver
+        entradas válidas, ou `None` caso contrário.
+
+    Raises:
+        requests.RequestException: Se houver erro na requisição HTTP.
+        feedparser.FeedParserError: Se houver erro ao processar o feed.
+        Exception: Para quaisquer outros erros inesperados.
+    """
     try:
         response = requests.get(url, timeout=timeout)
         response.raise_for_status()
@@ -108,11 +128,32 @@ def fetch_feed(url: str, timeout: int = 10) -> Optional[dict]:
         return None
 
 
-def extract_content(entry: dict, max_length: int = 2000) -> str:
-    """Extrai e sanitiza o conteúdo de um artigo."""
-    soup = BeautifulSoup(entry.get("description", ""), "html.parser")
-    text = soup.get_text(separator="\n", strip=True)
-    return text[:max_length] if text else "Sem conteúdo disponível."
+def fetch_article_from_feed(feed_url: str, source_name: str) -> Dict[str, str]:
+    """Busca e processa um artigo aleatório de um feed RSS.
+
+    Esta função obtém um feed RSS/Atom a partir da URL fornecida e seleciona
+    aleatoriamente um dos artigos disponíveis. Se o feed não puder ser obtido
+    ou estiver vazio, é gerada uma nota alternativa.
+
+    Args:
+        feed_url (str): A URL do feed RSS/Atom de onde o artigo será extraído.
+        source_name (str): O nome da fonte do feed, usado para personalizar
+            mensagens em caso de fallback.
+
+    Returns:
+        Dict[str, str]: Um dicionário contendo o título e o link do artigo
+            selecionado.
+        Se não houver artigos disponíveis, um fallback adequado é retornado.
+    """
+    feed = fetch_feed(feed_url)
+    if not feed:
+        return generate_fallback_note([source_name])
+
+    entry = random.choice(feed.entries)
+    return {
+        "title": entry.get("title", f"Artigo {source_name}"),
+        "link": entry.get("link", ""),
+    }
 
 
 def get_wikipedia() -> Dict[str, str]:
@@ -148,7 +189,6 @@ def get_wikipedia() -> Dict[str, str]:
         return {
             "title": data.get("title", "Artigo Desconhecido"),
             "link": data["content_urls"]["desktop"]["page"],
-            "content": data.get("extract", "Sem resumo disponível."),
         }
     except Exception as e:
         logging.error(f"Erro Wikipedia: {str(e)}", exc_info=True)
@@ -160,23 +200,55 @@ def get_jstor() -> Dict[str, str]:
     return fetch_article_from_feed("https://daily.jstor.org/feed/", "JSTOR")
 
 
-def get_pesquisa_fapesp() -> Dict[str, str]:
-    """Obtém artigo da Pesquisa FAPESP via RSS."""
-    return fetch_article_from_feed(
-        "https://revistapesquisa.fapesp.br/feed/", "Pesquisa FAPESP"
-    )
+def get_plato() -> Dict[str, str]:
+    """Obtém verbete aleatório da Stanford Encyclopedia of Philosophy"""
+    try:
+        response = requests.get(
+            "https://plato.stanford.edu/cgi-bin/encyclopedia/random"
+        )
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        # Extrai o título da entrada (está em um <h1>)
+        title_element = soup.find("h1")
+        if not title_element:
+            raise ValueError("Título não encontrado na página")
+
+        title = title_element.text.strip()
+
+        # Usa a URL final após o redirecionamento como link
+        return {"title": title, "link": response.url}
+
+    except Exception as e:
+        # Em caso de erro, retorna uma entrada de fallback
+        print(f"Erro: {e}")
+        return generate_fallback_note(["Stanford Philosophy"])
 
 
-def get_nautilus() -> Dict[str, str]:
-    """Obtém artigo do Nautilus via RSS."""
-    return fetch_article_from_feed("https://nautil.us/feed/", "Nautilus")
+def get_arxiv() -> Dict[str, str]:
 
+    CATEGORIES = [
+        "astro-ph",
+        "cond-mat",
+        "cs",
+        "gr-qc",
+        "hep-ex",
+        "hep-lat",
+        "hep-ph",
+        "hep-th",
+        "nlin",
+        "nucl-ex",
+        "nucl-th",
+        "physics",
+        "q-bio",
+        "quant-ph",
+    ]
 
-def get_science() -> Dict[str, str]:
-    """Obtém artigo do Nautilus via RSS."""
-    return fetch_article_from_feed(
-        "https://www.science.org/rss/news_current.xml", "Science"
-    )
+    """Artigos científicos filtrados por categorias-alvo"""
+
+    selected = random.choice(CATEGORIES)
+    return fetch_article_from_feed(f"http://arxiv.org/rss/{selected}", "Arxiv")
 
 
 def get_daily_stoic() -> Dict[str, str]:
@@ -184,17 +256,3 @@ def get_daily_stoic() -> Dict[str, str]:
     return fetch_article_from_feed(
         "https://dailystoic.com/feed/", "Daily Stoic"
     )
-
-
-def fetch_article_from_feed(feed_url: str, source_name: str) -> Dict[str, str]:
-    """Busca e processa um artigo de um feed RSS."""
-    feed = fetch_feed(feed_url)
-    if not feed:
-        return generate_fallback_note([source_name])
-
-    entry = random.choice(feed.entries)
-    return {
-        "title": entry.get("title", f"Artigo {source_name}"),
-        "link": entry.get("link", ""),
-        "content": extract_content(entry),
-    }
