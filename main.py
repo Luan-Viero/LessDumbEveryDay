@@ -1,7 +1,7 @@
 from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
-from sources import get_with_fallback
+from sources import get_content
 from gemini import generate_summary
 from urllib.parse import quote
 import logging
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         daily_font = fonts[day] if day < 5 else "wikipedia"  # Seg-Sex
 
         # Obter conteúdo estruturado
-        content_data = get_with_fallback(daily_font)
+        content_data = get_content(daily_font)
 
         # Validação reforçada
         if not content_data.get("main") or not content_data.get("daily_stoic"):
