@@ -18,93 +18,44 @@ def generate_summary(
         model = genai.GenerativeModel("gemini-1.5-pro-latest")
 
         prompt = f"""\
-# ANÁLISE SEPARADA DE FONTES - FORMATAÇÃO RIGOROSA
+# TAREFA DE ANÁLISE ESTRUTURADA PARA OBSIDIAN
 
-## INSTRUÇÕES GERAIS:
-- **Acesse o link {main_link} e ANALISE CUIDADOSAMENTE o conteúdo principal do texto.**
-- **Leia ATENTAMENTE o conteúdo do link {main_link} para identificar e extrair as informações solicitadas.**
-- **EXTRAIA as informações EXATAS do link, SEM INTERPRETAR, RESUMIR ou PARAFRASEAR.**
-- **MANTENHA o formato de saída EXATAMENTE como no exemplo fornecido, sem adicionar ou remover elementos.**
-- **Acesse o link {daily_stoic_link} e EXAMINE o conteúdo, identificando a citação mais relevante do dia.**
-- **NÃO adicione informações extras ou faça suposições. Extraia APENAS o que é solicitado.**
-- **A resposta deve ser SEMPRE em português**, independentemente do idioma original das fontes.
-- **Mantenha o padrão visual exato**: títulos, bullets e separações devem ser respeitados.
-- **Não interprete ou reformule informações**, apenas extraia das fontes fornecidas e formate.
+## FUNÇÃO:
+Você é um assistente de pesquisa acadêmica especializado em extração e formatação rigorosa.
 
+## INSTRUÇÕES:
+1. Acesse e analise SEPARADAMENTE:
+    - Conteúdo principal: '{main_link}'
+    - Daily Stoic: '{daily_stoic_link}'
 
----
+2. Para o conteúdo principal:
+    a. RESUMO: 3-5 parágrafos técnicos com definições precisas e contexto epistemológico
+    b. PONTOS-CHAVE: 3-5 elementos com:
+        - Título conciso (max 7 palavras)
+        - Descrição objetiva (1 frase)
+        - Aplicação prática (1 exemplo concreto)
 
-## FORMATO OBRIGATÓRIO DA RESPOSTA:
+3. Para o Daily Stoic:
+    a. Extraia a citação COMPLETA do dia
+    b. Traduza literalmente para português entre > e -
+    c. Retorne a citação traduzida mantendo a formatação exata do exemplo
 
-<!-- TAREFA 1 - ANÁLISE PRINCIPAL -->
-
-<!-- Acesse {main_link} e extraia do conteúdo principal do texto, o que se pede: -->
-
-## Resumo:
-
-<!-- Leia atentamente o conteúdo do link fornecido e:
-- Explique o conceito do conteúdo de forma clara, precisa e fundamentada, sem inventar informações.
-- Use definições bem estabelecidas e, se necessário, inclua exemplos concretos ou analogias para facilitar o entendimento.
-- O nível de detalhamento deve ser adequado para alguém com conhecimento intermediário no assunto, garantindo profundidade sem ser excessivamente técnico.
-- Caso existam diferentes abordagens ou interpretações, apresente-as de forma equilibrada, destacando os principais pontos de consenso e divergência.
-- Evite simplificações excessivas e especulações. -->
-
-## Pontos-chave:
-
-- **[TÍTULO DO PONTO]:** [Descrição objetiva do ponto].
-    - **Aplicação prática:** [Explicação de como aplicar(se necessário)].
-
-- **[TÍTULO DO PONTO]:** [Descrição objetiva do ponto].
-    - **Aplicação prática:** [Explicação de como aplicar(se necessário)].
-
-- **[TÍTULO DO PONTO]:** [Descrição objetiva do ponto].
-    - **Aplicação prática:** [Explicação de como aplicar(se necessário)].
-
-- *(Opcional: até 5 pontos no total)*
-
----
-
-<!-- TAREFA 2 - DAILY STOIC -->
-
-<!-- Link: {daily_stoic_link} -->
-
-## Citação do dia:
-
-> "[Texto EXATO da citação mais relevante do Daily Stoic]" (Traduzir da forma mais literal possível para o Português)
-- [Autor da citação] (se identificado)
-
----
-
-## EXEMPLO DE SAÍDA ESPERADA:
-
+## FORMATO OBRIGATÓRIO:
 ```markdown
 ## Resumo:
-
-Resumo do link principal.
+[Conteúdo analítico sem markdown. Inclua referências a escolas de pensamento e contexto histórico quando aplicável.]
 
 ## Pontos-chave:
+- **Título 1:** Descrição objetiva.
+    - **Aplicação prática:** Exemplo específico.
 
-- **Título:** Descrição.
-    - **Aplicação prática:** Explicação.
-
-- **Título:** Descrição.
-    - **Aplicação prática:** Explicação.
-
-- **Título:** Descrição.
-    - **Aplicação prática:** Explicação.
+(Repetir para 3-5 pontos)
 
 ---
 
 ## Citação do dia:
-
-> "Citação."
-- Autor
-
----
-```
-
-**IMPORTANTE:**
-A saída **deve ser exatamente** como o exemplo acima. O modelo **NÃO deve alterar a estrutura ou formato**.
+> "[Tradução literal]"
+- [Autor]```
 """
 
         response = model.generate_content(prompt)

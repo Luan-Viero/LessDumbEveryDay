@@ -91,7 +91,7 @@ def create_daily_note(
 
         # Criar template
         return f"""---
-id: "{note_id}"
+id: {note_id}
 tags: [{category}]
 tema:
 
@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
         # Determinar fonte do dia
         day = datetime.today().weekday()
-        fonts = ["wikipedia", "jstor", "plato", "arxiv", "daily_stoic"]
+        fonts = ["wikipedia", "jstor", "plato", "wikipedia", "daily_stoic"]
         daily_font = fonts[day] if day < 5 else "wikipedia"  # Seg-Sex
 
         # Obter conteúdo estruturado

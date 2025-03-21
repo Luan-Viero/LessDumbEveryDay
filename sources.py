@@ -226,31 +226,6 @@ def get_plato() -> Dict[str, str]:
         return generate_fallback_note(["Stanford Philosophy"])
 
 
-def get_arxiv() -> Dict[str, str]:
-
-    CATEGORIES = [
-        "astro-ph",
-        "cond-mat",
-        "cs",
-        "gr-qc",
-        "hep-ex",
-        "hep-lat",
-        "hep-ph",
-        "hep-th",
-        "nlin",
-        "nucl-ex",
-        "nucl-th",
-        "physics",
-        "q-bio",
-        "quant-ph",
-    ]
-
-    """Artigos científicos filtrados por categorias-alvo"""
-
-    selected = random.choice(CATEGORIES)
-    return fetch_article_from_feed(f"http://arxiv.org/rss/{selected}", "Arxiv")
-
-
 def get_daily_stoic() -> Dict[str, str]:
     """Obtém artigo do Daily Stoic via RSS."""
     return fetch_article_from_feed(
