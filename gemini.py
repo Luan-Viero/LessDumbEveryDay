@@ -4,6 +4,7 @@ import os
 
 load_dotenv()
 api_key = os.getenv("API_KEY")
+api_model = os.getenv("API_MODEL")
 
 
 def generate_summary(
@@ -15,7 +16,7 @@ def generate_summary(
     """
     try:
         genai.configure(api_key=api_key, transport="rest")
-        model = genai.GenerativeModel("gemini-1.5-pro-latest")
+        model = genai.GenerativeModel(api_model)
 
         prompt = f"""\
 # TAREFA DE ANÁLISE ESTRUTURADA PARA OBSIDIAN
